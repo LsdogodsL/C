@@ -1,0 +1,25 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from numba import jit
+ 
+@jit
+
+def mandel(rec,imc):
+    k = 0
+    rez = 0
+    imz = 0
+    while k < 1000 and rez**2+imz**2 < 4:
+        trez = rez ** 2 - imz ** 2 - rec
+        imz = 2*rez*imz - imc
+        rez = trez
+        k += 1
+    return k
+
+vmandel = np.vectorize(mandel)
+
+x, y = np.meshgrid(np.linspace(-1.7, 2.5, 1000), np.linspace(1.7, -2.5, 1000)) #数値はマンデルブロを表示する場所の座標、1000は解像度
+z = vmandel(x,y)
+plt.figure(figsize=[30,30])# Images size
+plt.pcolormesh(x, y, z, cmap='RdGy', vmin=0, vmax=250)
+plt.axis('scaled')
+plt.savefig("image.png", format="png", dpi=300)
